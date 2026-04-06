@@ -8,6 +8,8 @@ public class SimpleClient {
 
         try (Socket socket = new Socket(host, port)) {
 
+            System.out.println("Connected to server on " + host + ":" + port);
+
             BufferedReader userInput = new BufferedReader(
                     new InputStreamReader(System.in));
 
@@ -21,12 +23,20 @@ public class SimpleClient {
 
             System.out.println("Enter message (type 'exit' to quit):");
 
-            while ((message = userInput.readLine()) != null) {
-                if (message.equalsIgnoreCase("exit")) break;
+            while (true) {
+                System.out.print("> ");
+                message = userInput.readLine();
+
+                if (message == null || message.equalsIgnoreCase("exit")) break;
 
                 out.println(message);
 
                 String response = in.readLine();
+                if (response == null) {
+                    System.out.println("Server disconnected.");
+                    break;
+                }
+
                 System.out.println("Server: " + response);
             }
 

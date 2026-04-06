@@ -16,24 +16,24 @@ public class SimpleServer {
             PrintWriter out = new PrintWriter(
                     client.getOutputStream(), true);
 
-            BufferedWriter fileWriter = new BufferedWriter(
-                    new FileWriter("log.txt", true)); // append mode
+            try (BufferedWriter fileWriter = new BufferedWriter(
+                    new FileWriter("log.txt", true))) { // append mode
 
-            String message;
+                String message;
+                while ((message = in.readLine()) != null) {
+                    System.out.println("Received: " + message);
 
-            while ((message = in.readLine()) != null) {
-                System.out.println("Received: " + message);
+                    // Write to file
+                    fileWriter.write(message);
+                    fileWriter.newLine();
+                    fileWriter.flush();
 
-                // Write to file
-                fileWriter.write(message);
-                fileWriter.newLine();
-                fileWriter.flush();
-
-                // Send response
-                out.println("Message received");
+                    // Send acknowledgment
+                    out.println("Message received");
+                }
             }
 
-            fileWriter.close();
+            System.out.println("Client disconnected.");
             client.close();
 
         } catch (IOException e) {
